@@ -1,0 +1,56 @@
+Configuration:
+  name: Default
+
+  Properties:
+    Property:
+      name: log-path
+      value: logs
+
+  Appenders:
+    Console:
+      name: ConsoleAppender
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+
+    File:
+      -
+        name: FileAppender
+        fileName: ${log-path}/logfile.log
+        PatternLayout:
+          Pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+      -
+        name: SplunkAppender
+        fileName: ${log-path}/logfile-splunk.log
+        PatternLayout:
+          Pattern: " # [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg"
+
+  Loggers:
+    logger:
+      -
+        name: it.vashykator.FileLogger
+        level: debug
+        additivity: false
+        AppenderRef:
+          ref: FileAppender
+      -
+        name: it.vashykator.SplunkLogger
+        level: error
+        additivity: false
+        AppenderRef:
+          ref: SplunkAppender
+      -
+        name: it.vashykator.ConsoleLogger
+        level: debug
+        additivity: false
+        AppenderRef:
+          ref: ConsoleAppender
+
+    Root:
+      level: debug
+      AppenderRef:
+        - ref: ConsoleAppender
+        - ref: FileAppender
+          level: info
+        - ref: SplunkAppender
+          level: error
